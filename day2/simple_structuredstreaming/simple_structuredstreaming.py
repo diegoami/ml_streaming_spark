@@ -21,6 +21,7 @@ decode_udf = F.udf(decode, StringType())
 
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Test Stream").getOrCreate()
+    spark.sparkContext.setLogLevel("WARN")
 
     ds = (spark.readStream
             .format("kafka")
@@ -28,11 +29,13 @@ if __name__ == "__main__":
             .option("subscribe", "test")
             .load())
 
+
+
     decoded_ds = ds.select(decode_udf(F.col("value")).alias("content"))
     words = decoded_ds.withColumn("word", F.explode(F.split(F.col("content"), " ")))
-    word_counts = words.groupBy("word").count()
-
-    query = (word_counts.writeStream 
+    word_counts = words.groupBy("word").count().sort("count", ascending=False)
+    print(word_counts)
+    query = (word_counts.writeStream
              .outputMode("complete")
              .format("console")
              .start())

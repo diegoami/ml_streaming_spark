@@ -43,6 +43,7 @@ if __name__ == "__main__":
     # and batch interval of 1 second
     sc = SparkContext("local[2]", "Streaming Linear Regression")
     # 2nd argument is batch duration
+    sc.setLogLevel("WARN")
     ssc = StreamingContext(sc, 5)
 
     directKafkaStream = KafkaUtils.createDirectStream(ssc,
@@ -67,7 +68,7 @@ if __name__ == "__main__":
         print("Predictions: %r" % predictions)
         print("Weights %r" % model._model.weights)
 
-    # predictionStream.foreachRDD(printResults)
-    predictionStream.saveAsTextFiles("predictions")
+    predictionStream.foreachRDD(printResults)
+    #predictionStream.saveAsTextFiles("predictions")
     ssc.start()
     ssc.awaitTermination()

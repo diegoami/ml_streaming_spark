@@ -11,6 +11,8 @@ from sklearn.linear_model import LogisticRegression
 from kafka import KafkaProducer
 
 
+
+
 def serialize(msg):
     try:
         encoded_msg = json.dumps(msg)
@@ -54,6 +56,15 @@ while True:
         "rows": rows,
         "score": score
     }
+    print(msg)
+    print(toJSON(msg))
+    xjson =toJSON(msg)
 
-    producer.send("data-topic", msg)
+    b = bytearray()
+    b.extend(map(ord, xjson))
+    string = b.decode('utf-8')
+    print(string)
+    c = bytearray()
+    c.extend(map(ord, string))
+    producer.send("data-topic", c)
     sleep(30)

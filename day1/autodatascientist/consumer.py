@@ -38,7 +38,7 @@ for msg in consumer:
     X = np.empty((n, m), dtype=float)
     y = np.empty((n), dtype=int)
 
-    for i in xrange(n):
+    for i in range(n):
         row = rows[i]
         X[i, :] = row["x"]
         y[i] = row["label"]
